@@ -1,7 +1,7 @@
-from flask import Flask
+from config import app
+
 from registration import register_blueprint
 
-app = Flask(__name__)
 
 
 @app.route('/')
