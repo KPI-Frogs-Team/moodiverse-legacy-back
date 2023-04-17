@@ -1,5 +1,7 @@
-from config import app, rate_limits
-from sensitive import connection
+from src.config import app, rate_limits
+from src.sensitive import connection
+from .functions import check_email_and_username
+from .handlers import ratelimit_handler
 
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
@@ -40,14 +42,7 @@ def register():
     return jsonify({'response': 'User created successfully!'}), 200
 
 
-@app.errorhandler(429)
-def ratelimit_handler(e):
-    return jsonify({"error": "You've been rate limited. Wait a minute."}), 429
 
 
-def check_email_and_username(email, username):
-    with connection.cursor() as cursor:
-        cursor.execute('''SELECT EXISTS (SELECT 1 FROM "user" WHERE email = %s OR username = %s);''', (email, username))
-        is_exists = cursor.fetchone()[0]
 
-        return is_exists
+
