@@ -16,6 +16,9 @@ def register():
     password = request.json.get('password')
     birthdate = request.json.get('birthdate')
 
+    if not username or not email or not password or not birthdate:
+        return jsonify({'error': 'Missing required fields'}), 400
+
     # Hash the password using bcrypt
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
