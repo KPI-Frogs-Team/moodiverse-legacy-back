@@ -40,9 +40,3 @@ def register():
         connection.commit()
 
     return jsonify({'response': 'User created successfully!'}), 200
-
-
-
-
-
-
