@@ -1,7 +1,6 @@
 from config import app
 
-from registration import register_blueprint
-
+from src.modules.register.registration import register_blueprint
 
 
 @app.route('/')
