@@ -1,6 +1,6 @@
 from src.config import app, rate_limits
 from src.sensitive import connection
-from .functions import check_email_and_username
+from .functions import check_email_and_username, add_user_into_db
 from .handlers import ratelimit_handler
 
 from flask import Blueprint, request, jsonify
@@ -33,10 +33,6 @@ def register():
     # Hash the password using bcrypt
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    with connection.cursor() as cursor:
-        cursor.execute(
-            '''INSERT INTO "user" (username, email, password, birth_date, sex_id) VALUES (%s, %s, %s, %s, NULL);''',
-            (username, email, hashed_password, birthdate))
-        connection.commit()
+    add_user_into_db(username, email, hashed_password, birthdate)
 
     return jsonify({'response': 'User created successfully!'}), 200
