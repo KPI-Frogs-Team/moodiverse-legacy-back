@@ -1,4 +1,4 @@
-from config import app
+from config import app, rate_limits
 from sensitive import connection
 
 from flask import Blueprint, request, jsonify
@@ -12,7 +12,7 @@ limiter = Limiter(app=app, key_func=get_remote_address)
 
 
 @register_blueprint.route('/register', methods=['POST'])
-@limiter.limit("6 per minute")
+@limiter.limit(rate_limits["default"])
 def register():
     username = request.json.get('username')
     email = request.json.get('email')
