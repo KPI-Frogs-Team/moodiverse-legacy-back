@@ -12,6 +12,6 @@ def check_email_and_username(email, username):
 def add_user_into_db(username, email, hashed_password, birthdate):
     with connection.cursor() as cursor:
         cursor.execute(
-            '''INSERT INTO "user" (username, email, password, birth_date, sex_id) VALUES (%s, %s, %s, %s, NULL);''',
+            '''INSERT INTO "user" (username, email, password, birth_date, first_name, last_name, sex_id) VALUES (%s, %s, %s, %s, NULL, NULL, NULL);''',
             (username, email, hashed_password, birthdate))
         connection.commit()
