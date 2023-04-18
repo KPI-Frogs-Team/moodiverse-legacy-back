@@ -6,6 +6,5 @@ def retrieve_user(user_id):
         cursor.execute('''SELECT id, username, first_name, last_name, email, birth_date, (SELECT name from sex WHERE id = sex_id) as sex from "user" WHERE id=%s;''', user_id)
         user = cursor.fetchone()
         cursor.close()
-        print(user)
         return user
 
