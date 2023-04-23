@@ -1,5 +1,4 @@
 from src.config import app, rate_limits
-from src.sensitive import connection
 from .functions import check_email_and_username, add_user_into_db
 from .handlers import ratelimit_handler
 
@@ -20,16 +19,18 @@ def register():
     email = request.json.get('email')
     password = request.json.get('password')
     birthdate = request.json.get('birthdate')
+    registration_date = request.json.get('registrationDate')
 
-    if not username or not email or not password or not birthdate:
+    if not username or not email or not password or not birthdate or not registration_date:
         return jsonify({'error': 'Missing required fields'}), 400
 
     is_exists = check_email_and_username(email, username)
+
     if is_exists:
         return jsonify({'error': 'User with given email or username already exists'}), 409
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    add_user_into_db(username, email, hashed_password, birthdate)
+    add_user_into_db(username, email, hashed_password, birthdate, registration_date)
 
     return jsonify({'response': 'User created successfully!'}), 200

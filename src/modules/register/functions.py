@@ -1,17 +1,26 @@
-from src.sensitive import connection
+from datetime import datetime
+
+from src.config import engine
+from src.models.database import User
+
+from sqlalchemy.orm import Session
 
 
 def check_email_and_username(email, username):
-    with connection.cursor() as cursor:
-        cursor.execute('''SELECT EXISTS (SELECT 1 FROM "user" WHERE email = %s OR username = %s);''', (email, username))
-        is_exists = cursor.fetchone()[0]
-
-        return is_exists
+    with Session(engine) as session:
+        exists = session.query(User).filter((User.email == email) | (User.username == username)).first()
+        return True if exists else False
 
 
-def add_user_into_db(username, email, hashed_password, birthdate):
-    with connection.cursor() as cursor:
-        cursor.execute(
-            '''INSERT INTO "user" (username, email, password, birth_date, first_name, last_name, sex_id) VALUES (%s, %s, %s, %s, NULL, NULL, NULL);''',
-            (username, email, hashed_password, birthdate))
-        connection.commit()
+def add_user_into_db(username, email, hashed_password, birthdate, registration_date):
+    with Session(engine) as session:
+        user = User(
+            username=username,
+            email=email,
+            password=hashed_password,
+            birth_date=datetime.strptime(birthdate, '%d.%m.%Y'),
+            registration_date=datetime.strptime(registration_date, '%d.%m.%Y')
+        )
+
+        session.add(user)
+        session.commit()
