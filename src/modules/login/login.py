@@ -1,8 +1,8 @@
-from flask import make_response,  session
+from flask import session
 import jwt
 from datetime import datetime
 from src.config import app, rate_limits
-from src.modules.login.functions import check_user
+from src.modules.login.functions import check_user, compare_passwords
 from src.modules.login.handlers import ratelimit_handler
 
 from src.config import login_token_lifetime
@@ -23,7 +23,7 @@ def login():
     username = request.json.get('username')
     password = request.json.get('password')
 
-    if check_user(username, password):
+    if check_user(username) and compare_passwords(bcrypt, username, password):
         session['logged_in'] = True
 
         token = jwt.encode({
@@ -33,4 +33,4 @@ def login():
             app.config['SECRET_KEY'], algorithm="HS256")
         return jsonify({'token': token})
     else:
-        return jsonify({'error': 'Unable to verify'}), 403
+        return jsonify({'error': 'Unable to verify a user'}), 403
