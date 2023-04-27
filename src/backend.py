@@ -1,7 +1,7 @@
 from config import app
 
 from src.modules.register.registration import register_blueprint
-from src.modules.retrieve_user_data.registration import register_blueprint_retrieve_user_account
+from src.modules.login.login import login_blueprint
 
 
 @app.route('/')
@@ -10,7 +10,7 @@ def index():
 
 
 app.register_blueprint(register_blueprint)
-app.register_blueprint(register_blueprint_retrieve_user_account)
+app.register_blueprint(login_blueprint)
 
 
 if __name__ == "__main__":
