@@ -1,0 +1,70 @@
+import jwt
+from flask import jsonify, request
+from functools import wraps
+from sqlalchemy.orm import Session
+
+from src.config import app
+from src.config import engine
+from src.models.database import Mood, User, Record
+
+import datetime
+
+
+def token_required(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('token')
+        if not token:
+            return jsonify({'Alert!': 'Token is missing!'}), 401
+        try:
+            decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            return func(decoded_token, *args, **kwargs)
+        except:
+            return jsonify({'Message': 'Invalid token'}), 403
+
+    return decorated
+
+
+def get_mood_id(name):
+    with Session(engine) as session:
+        mood_id = session.query(Mood.id).filter_by(name=name).first()[0]
+
+        return mood_id
+
+
+def get_user_id(username):
+    with Session(engine) as session:
+        user_id = session.query(User.id).filter_by(username=username).first()[0]
+
+        return user_id
+
+
+def create_mood_record(user_id, mood_id, text):
+    with Session(engine) as session:
+        record = Record(
+            date=datetime.datetime.now(),
+            user_id=user_id,
+            mood_id=mood_id,
+            text=text
+        )
+
+        session.add(record)
+        session.commit()
+
+
+def create_response():
+    with Session(engine) as session:
+        moods = session.query(Mood).all()
+
+        result = []
+        for mood in moods:
+            result.append({
+                'name': mood.name,
+                'image': mood.image
+            })
+
+        json_result = {
+            'moods': result
+        }
+
+        return json_result
