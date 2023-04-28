@@ -39,10 +39,10 @@ def get_user_id(username):
         return user_id
 
 
-def create_mood_record(user_id, mood_id, text):
+def create_mood_record(user_id, mood_id, text, date):
     with Session(engine) as session:
         record = Record(
-            date=datetime.datetime.now(),
+            date=date,
             user_id=user_id,
             mood_id=mood_id,
             text=text

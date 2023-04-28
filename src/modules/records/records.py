@@ -1,3 +1,5 @@
+import datetime
+
 from src.config import app, rate_limits
 from .functions import token_required, get_mood_id, get_user_id, create_mood_record, create_response
 from .handlers import ratelimit_handler
@@ -20,8 +22,12 @@ def create_record(decoded_token):
 
     mood_name = request.json.get('mood')
     text = request.json.get('text')
-    if not mood_name or not text:
-        return jsonify({'error': 'Mood and text fields are required.'}), 400
+    try:
+        date = datetime.datetime.strptime(request.json.get('date'), '%d.%m.%Y').date()
+    except:
+        return jsonify({'error': 'Error parsing a date.'}), 500
+    if not mood_name or not text or not date:
+        return jsonify({'error': 'Mood, text and date fields are required.'}), 400
 
     mood_id = get_mood_id(mood_name)
     if not mood_id:
@@ -32,7 +38,7 @@ def create_record(decoded_token):
         return jsonify({'error': 'User not found.'}), 404
 
     try:
-        create_mood_record(user_id, mood_id, text)
+        create_mood_record(user_id, mood_id, text, date)
     except:
         return jsonify({'error': 'Error occurred while creating record.'}), 500
 
