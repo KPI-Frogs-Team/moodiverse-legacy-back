@@ -1,7 +1,7 @@
 import datetime
 
 from src.config import app, rate_limits
-from .functions import token_required, get_mood_id, get_user_id, create_mood_record, create_response
+from .functions import token_required, get_mood_id, get_user_id, create_mood_record, create_response, get_record_from_db
 from .handlers import ratelimit_handler
 
 from flask import Blueprint, request, jsonify
@@ -45,3 +45,30 @@ def create_record(decoded_token):
     response = create_response()
 
     return response, 200
+
+
+@record_blueprint.route('/record', methods=['GET'])
+@limiter.limit(rate_limits["default"])
+@token_required
+def get_record(decoded_token):
+    username = decoded_token['user']
+
+    try:
+        date_str = request.json.get('date')
+        if not date_str:
+            return jsonify({'error': 'Date field is required.'}), 400
+
+        date = datetime.datetime.strptime(date_str, '%d.%m.%Y').date()
+    except:
+        return jsonify({'error': 'Error parsing the date.'}), 400
+
+    user_id = get_user_id(username)
+    if not user_id:
+        return jsonify({'error': 'User not found.'}), 404
+
+    record = get_record_from_db(user_id, date)
+
+    if record:
+        return record, 200
+    else:
+        return jsonify({'error': 'There\'s no record for this date.'}), 404

@@ -7,8 +7,6 @@ from src.config import app
 from src.config import engine
 from src.models.database import Mood, User, Record
 
-import datetime
-
 
 def token_required(func):
     @wraps(func)
@@ -68,3 +66,16 @@ def create_response():
         }
 
         return json_result
+
+
+def get_record_from_db(user_id, date):
+    with Session(engine) as session:
+        query = session.query(Record.text, Mood.image).join(Mood, Record.mood_id == Mood.id).filter(Record.user_id == user_id, Record.date == date).all()
+
+        if len(query) > 0:
+            result = query[0]
+            json_result = {"emoji": result[1], "text": result[0]}
+
+            return json_result
+        else:
+            return None
