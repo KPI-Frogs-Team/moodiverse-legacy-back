@@ -37,6 +37,10 @@ def create_record(decoded_token):
     if not user_id:
         return jsonify({'error': 'User not found.'}), 404
 
+    is_record_exists = check_date(user_id, date)
+    if is_record_exists:
+        return jsonify({'error': 'Record already exists at this date.'}), 500
+
     try:
         create_mood_record(user_id, mood_id, text, date)
     except:
