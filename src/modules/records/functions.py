@@ -2,6 +2,7 @@ import jwt
 from flask import jsonify, request
 from functools import wraps
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import exists
 
 from src.config import app
 from src.config import engine
@@ -79,3 +80,18 @@ def get_record_from_db(user_id, date):
             return json_result
         else:
             return None
+
+
+def check_date(user_id, date):
+    with Session(engine) as session:
+        is_exists = session.query(exists().where((Record.user_id == user_id) & (Record.date == date))).scalar()
+
+        return is_exists
+
+
+def update_record_in_db(user_id, date, new_mood_id, new_text):
+    with Session(engine) as session:
+        session.query(Record).filter_by(user_id=user_id, date=date).update(
+            {'mood_id': new_mood_id, 'text': new_text}
+        )
+        session.commit()
