@@ -17,7 +17,7 @@ bcrypt = Bcrypt(app)
 limiter = Limiter(app=app, key_func=get_remote_address)
 
 
-@login_blueprint.route('/login', methods=['POST'])
+@login_blueprint.route('/user/login', methods=['POST'])
 @limiter.limit(rate_limits["default"])
 def login():
     username = request.json.get('username')

@@ -1,3 +1,5 @@
+from datetime import date
+
 from src.config import app, rate_limits
 from .functions import check_email_and_username, add_user_into_db
 from .handlers import ratelimit_handler
@@ -12,14 +14,14 @@ bcrypt = Bcrypt(app)
 limiter = Limiter(app=app, key_func=get_remote_address)
 
 
-@register_blueprint.route('/register', methods=['POST'])
+@register_blueprint.route('/user/register', methods=['POST'])
 @limiter.limit(rate_limits["default"])
 def register():
     username = request.json.get('username')
     email = request.json.get('email')
     password = request.json.get('password')
     birthdate = request.json.get('birthdate')
-    registration_date = request.json.get('registrationDate')
+    registration_date = date.today().strftime('%d.%m.%Y')
 
     if not username or not email or not password or not birthdate or not registration_date:
         return jsonify({'error': 'Missing required fields'}), 400

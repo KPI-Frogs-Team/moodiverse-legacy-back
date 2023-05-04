@@ -11,7 +11,8 @@ db = SQLAlchemy(app)
 moods = Table('moods', db.metadata,
               Column('id', Integer, primary_key=True),
               Column('name', String(255), nullable=False),
-              Column('image', String(255), nullable=False)
+              Column('image', String(255), nullable=False),
+              Column('points', Integer, nullable=False),
               )
 
 avatars = Table('avatars', db.metadata,
