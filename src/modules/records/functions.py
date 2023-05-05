@@ -53,8 +53,6 @@ def get_record_from_db(user_id, date):
             json_result = {"emoji": result[1], "text": result[0], "date": result[2].strftime('%d.%m.%Y')}
 
             return json_result
-        else:
-            return None
 
 
 def check_date(user_id, date):
