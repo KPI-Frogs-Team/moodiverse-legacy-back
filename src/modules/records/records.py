@@ -68,8 +68,8 @@ def get_record(decoded_token):
 
     if record:
         return record, 200
-    else:
-        return jsonify({'error': 'There\'s no record for this date.'}), 404
+
+    return jsonify({'error': 'There\'s no record for this date.'}), 404
 
 
 @record_blueprint.route('/record', methods=['PUT'])
