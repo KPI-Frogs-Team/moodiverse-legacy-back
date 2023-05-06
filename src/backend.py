@@ -4,6 +4,7 @@ from src.modules.register.registration import register_blueprint
 from src.modules.login.login import login_blueprint
 from src.modules.records.records import record_blueprint
 from src.modules.avatars.avatars import avatars_blueprint
+from src.modules.moods.moods import moods_blueprint
 
 @app.route('/')
 def index():
@@ -14,6 +15,8 @@ app.register_blueprint(register_blueprint)
 app.register_blueprint(login_blueprint)
 app.register_blueprint(record_blueprint)
 app.register_blueprint(avatars_blueprint)
+app.register_blueprint(moods_blueprint)
+
 
 
 if __name__ == "__main__":
