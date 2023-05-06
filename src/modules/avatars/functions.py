@@ -1,8 +1,9 @@
 import jwt
 from flask import jsonify, request
 from functools import wraps
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy.sql import exists
+
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 from src.config import app
 from src.config import engine
@@ -41,3 +42,10 @@ def check_user(username):
     with Session(engine) as session:
         is_exists = session.query(User).filter(User.username == username).first()
         return True if is_exists else False
+
+
+def get_random_avatar():
+    with Session(engine) as session:
+        random_avatar = session.query(Avatar.avatar).order_by(func.random()).first()[0]
+
+        return {"avatar": random_avatar}

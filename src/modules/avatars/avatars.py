@@ -1,10 +1,8 @@
-import datetime
-
 from src.config import app, rate_limits
-from .functions import token_required, get_avatar_and_username, check_user
+from .functions import token_required, get_avatar_and_username, check_user, get_random_avatar
 from .handlers import ratelimit_handler
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify
 from flask_bcrypt import Bcrypt
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -29,3 +27,14 @@ def get_header(decoded_token):
         return jsonify({'error': 'Error occurred.'}), 500
 
     return avatar_and_username, 200
+
+
+@avatars_blueprint.route('/avatar', methods=['GET'])
+@limiter.limit(rate_limits["default"])
+def get_avatar():
+    try:
+        avatar = get_random_avatar()
+    except:
+        return jsonify({'error': 'Error occurred.'}), 500
+
+    return avatar, 200
