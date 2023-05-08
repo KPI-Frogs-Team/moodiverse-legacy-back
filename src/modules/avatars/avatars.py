@@ -1,5 +1,5 @@
 from src.config import app, rate_limits
-from .functions import token_required, get_avatar_and_username, check_user, get_random_avatar
+from .functions import token_required, get_avatar_and_username, check_user, get_random_avatar, set_avatar
 from .handlers import ratelimit_handler
 
 from flask import Blueprint, jsonify
@@ -31,10 +31,16 @@ def get_header(decoded_token):
 
 @avatars_blueprint.route('/avatar', methods=['GET'])
 @limiter.limit(rate_limits["default"])
-def get_avatar():
+@token_required
+def get_avatar(decoded_token):
+    username = decoded_token['user']
+    if not check_user(username):
+        return jsonify({'error': 'Unable to verify a user'}), 403
+
     try:
         avatar = get_random_avatar()
+        set_avatar(username, avatar[0])
     except:
         return jsonify({'error': 'Error occurred.'}), 500
 
-    return avatar, 200
+    return avatar[1], 200

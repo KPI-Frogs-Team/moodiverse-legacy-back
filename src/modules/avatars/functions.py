@@ -2,7 +2,7 @@ import jwt
 from flask import jsonify, request
 from functools import wraps
 
-from sqlalchemy import func
+from sqlalchemy import func, update
 from sqlalchemy.orm import Session
 
 from src.config import app
@@ -46,6 +46,16 @@ def check_user(username):
 
 def get_random_avatar():
     with Session(engine) as session:
-        random_avatar = session.query(Avatar.avatar).order_by(func.random()).first()[0]
+        random_avatar = session.query(Avatar.id, Avatar.avatar).order_by(func.random()).first()
 
-        return {"avatar": random_avatar}
+        return random_avatar
+
+
+def set_avatar(username, avatar_id):
+    with Session(engine) as session:
+        session.execute(
+            update(User)
+                .where(User.username == username)
+                .values(avatar_id=avatar_id)
+        )
+        session.commit()
