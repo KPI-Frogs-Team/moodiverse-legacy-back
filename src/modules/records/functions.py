@@ -4,7 +4,7 @@ from functools import wraps
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import exists
 
-from src.config import app
+from src.config import app, db
 from src.config import engine
 from src.models.database import Mood, User, Record
 
@@ -68,3 +68,10 @@ def update_record_in_db(user_id, date, new_mood_id, new_text):
             {'mood_id': new_mood_id, 'text': new_text}
         )
         session.commit()
+
+
+def delete_record(user_id):
+    with Session(engine) as session:
+        session.query(Record).filter(Record.user_id == user_id).delete()
+        session.commit()
+

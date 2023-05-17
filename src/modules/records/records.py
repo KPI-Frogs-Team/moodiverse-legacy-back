@@ -1,7 +1,7 @@
 import datetime
 
 from src.config import app, rate_limits
-from .functions import token_required, get_user_id, create_mood_record, get_record_from_db, update_record_in_db, check_date
+from .functions import token_required, get_user_id, create_mood_record, get_record_from_db, update_record_in_db, check_date, delete_record
 from .handlers import ratelimit_handler
 
 from flask import Blueprint, request, jsonify
@@ -99,5 +99,20 @@ def update_record(decoded_token):
         return jsonify({'error': 'There\'s no record for this date.'}), 404
 
     update_record_in_db(user_id, date, new_mood_id, new_text)
+
+    return '', 200
+
+
+@record_blueprint.route('/record/delete', methods=['DELETE'])
+@limiter.limit(rate_limits["default"])
+@token_required
+def delete_records(decoded_token):
+    username = decoded_token['user']
+
+    user_id = get_user_id(username)
+    if not user_id:
+        return jsonify({'error': 'User not found.'}), 404
+
+    delete_record(user_id)
 
     return '', 200
