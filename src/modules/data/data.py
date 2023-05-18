@@ -7,12 +7,12 @@ from flask_bcrypt import Bcrypt
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-user_blueprint = Blueprint('data', __name__)
+data_blueprint = Blueprint('data', __name__)
 bcrypt = Bcrypt(app)
 limiter = Limiter(app=app, key_func=get_remote_address)
 
 
-@user_blueprint.route('/user/getPersonalData', methods=['GET'])
+@data_blueprint.route('/user/getPersonalData', methods=['GET'])
 @limiter.limit(rate_limits["default"])
 @token_required
 def get_record(decoded_token):
