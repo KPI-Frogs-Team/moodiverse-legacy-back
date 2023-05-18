@@ -6,7 +6,7 @@ from sqlalchemy.sql import exists
 
 from src.config import app
 from src.config import engine
-from src.models.database import Mood, User, Record, Sex
+from src.models.database import User, Sex
 
 
 def token_required(func):
@@ -31,7 +31,6 @@ def get_user_id(username):
         return user_id
 
 
-
 def get_user_data(user_id):
     with Session(engine) as session:
         is_exists = session.query(exists().where((User.sex_id != None) & (User.id == user_id))).scalar()
@@ -45,7 +44,7 @@ def get_user_data(user_id):
                     "Username": result.username if result.username else "",
                     "FirstName": result.first_name if result.first_name else "",
                     "LastName": result.last_name if result.last_name else "",
-                    "Birthdate": result.birth_date if result.birth_date else "",
+                    "Birthdate": result.birth_date.strftime("%d.%m.%Y") if result.birth_date else "",
                     "Sex": result.sex_name if result.sex_name else ""
                 }
 
@@ -57,10 +56,8 @@ def get_user_data(user_id):
                     "Username": result.username if result.username else "",
                     "FirstName": result.first_name if result.first_name else "",
                     "LastName": result.last_name if result.last_name else "",
-                    "Birthdate": result.birth_date if result.birth_date else "",
+                    "Birthdate": result.birth_date.strftime("%d.%m.%Y") if result.birth_date else "",
                     "Sex": ""
                 }
 
         return json_result
-
-
