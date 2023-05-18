@@ -18,7 +18,8 @@ def token_required(func):
         try:
             decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             return func(decoded_token, *args, **kwargs)
-        except:
+        except Exception as e:
+            print(e)
             return jsonify({'Message': 'Invalid token'}), 403
 
     return decorated
@@ -75,3 +76,10 @@ def delete_record(user_id):
         session.query(Record).filter(Record.user_id == user_id).delete()
         session.commit()
 
+
+def compare_passwords(bcrypt, username, password):
+    with Session(engine) as session:
+        hashed_password = session.query(User).filter(User.username == username).first().password
+        is_matched = bcrypt.check_password_hash(hashed_password, password)
+
+        return is_matched
