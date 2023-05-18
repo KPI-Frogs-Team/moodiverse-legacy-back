@@ -24,6 +24,14 @@ def token_required(func):
     return decorated
 
 
+def compare_passwords(bcrypt, username, password):
+    with Session(engine) as session:
+        hashed_password = session.query(User).filter(User.username == username).first().password
+        is_matched = bcrypt.check_password_hash(hashed_password, password)
+
+        return is_matched
+
+
 def get_user_id(username):
     with Session(engine) as session:
         user_id = session.query(User.id).filter_by(username=username).first()[0]
@@ -61,3 +69,46 @@ def get_user_data(user_id):
                 }
 
         return json_result
+
+
+def change_password(user_id, hashed_password):
+    with Session(engine) as session:
+        session.query(User).filter_by(id=user_id).update(
+            {'password': hashed_password}
+        )
+        session.commit()
+
+
+def change_email(user_id, new_email):
+    with Session(engine) as session:
+        session.query(User).filter_by(id=user_id).update(
+            {'email': new_email}
+        )
+        session.commit()
+
+
+def change_data(user_id, newUsername, newFirstName, newLastName, newBirthdate, newSex_id):
+    with Session(engine) as session:
+        if newUsername:
+            session.query(User).filter_by(id=user_id).update(
+                {'username': newUsername}
+            )
+        if newFirstName:
+            session.query(User).filter_by(id=user_id).update(
+                {'first_name': newFirstName}
+            )
+        if newLastName:
+            session.query(User).filter_by(id=user_id).update(
+                {'last_name': newLastName}
+            )
+        if newBirthdate:
+            session.query(User).filter_by(id=user_id).update(
+                {'birth_date': newBirthdate}
+            )
+        if newSex_id:
+            session.query(User).filter_by(id=user_id).update(
+                {'sex_id': newSex_id}
+            )
+
+        session.commit()
+
