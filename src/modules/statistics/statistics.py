@@ -1,5 +1,3 @@
-import datetime
-
 from src.config import app, rate_limits
 from .functions import token_required, get_user_id, get_records_points, get_records_count
 from .handlers import ratelimit_handler
@@ -18,7 +16,6 @@ limiter = Limiter(app=app, key_func=get_remote_address)
 @limiter.limit(rate_limits["default"])
 @token_required
 def get_table_statistics(decoded_token):
-
     username = decoded_token['user']
 
     month = request.json.get('month')
@@ -29,12 +26,14 @@ def get_table_statistics(decoded_token):
     if not year:
         return jsonify({'error': 'year field is required.'}), 400
 
-
     user_id = get_user_id(username)
     if not user_id:
         return jsonify({'error': 'User not found.'}), 404
 
-    records = get_records_points(user_id, month, year)
+    try:
+        records = get_records_points(user_id, month, year)
+    except:
+        return jsonify({'error': 'Error occurred.'}), 500
 
     if records:
         return records, 200
@@ -62,7 +61,10 @@ def get_round_statistics(decoded_token):
     if not user_id:
         return jsonify({'error': 'User not found.'}), 404
 
-    records = get_records_count(user_id, month, year)
+    try:
+        records = get_records_count(user_id, month, year)
+    except:
+        return jsonify({'error': 'Error occurred.'}), 500
 
     if records:
         return records, 200

@@ -40,7 +40,7 @@ def get_records_points(user_id, month, year):
         records = session.query(Record.text, Mood.points, Record.date).join(Mood, Record.mood_id == Mood.id).filter(Record.user_id == user_id).filter(Record.date.between(start_date, end_date)).all()
 
         json_result = {
-            'statistics': [{'date': record.date, 'points': record.points} for record in records]
+            'statistics': [{'date': record.date.strftime("%d.%m.%Y"), 'points': record.points} for record in records]
         }
 
         return json_result
