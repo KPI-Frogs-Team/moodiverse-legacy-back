@@ -18,8 +18,7 @@ def token_required(func):
         try:
             decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             return func(decoded_token, *args, **kwargs)
-        except Exception as e:
-            print(e)
+        except:
             return jsonify({'Message': 'Invalid token'}), 403
 
     return decorated
