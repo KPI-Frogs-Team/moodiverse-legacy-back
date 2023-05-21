@@ -1,8 +1,7 @@
 from src.config import app, rate_limits
 from datetime import datetime
 from src.config import login_token_lifetime
-from .functions import token_required, get_user_id, get_user_data, compare_passwords, change_password, change_email, \
-    change_data
+from .functions import token_required, get_user_id, get_user_data, compare_passwords, change_password, change_email, change_data
 from .handlers import ratelimit_handler
 import jwt
 from flask import Blueprint, jsonify

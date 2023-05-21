@@ -9,12 +9,6 @@ from src.modules.data.data import data_blueprint
 from src.modules.avatars.avatars import avatars_blueprint
 from src.modules.user.user import user_blueprint
 
-
-@app.route('/')
-def index():
-    return "Hello world"
-
-
 app.register_blueprint(register_blueprint)
 app.register_blueprint(login_blueprint)
 app.register_blueprint(record_blueprint)
